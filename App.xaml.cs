@@ -45,7 +45,7 @@ public partial class App : System.Windows.Application
             {
                 await Task.Run(() => _openSettingsSignal!.WaitOne(), cancellationToken);
                 if (!cancellationToken.IsCancellationRequested)
-                    Dispatcher.BeginInvoke(window.OpenSettings);
+                    _ = Dispatcher.BeginInvoke(new Action(window.OpenSettings));
             }
             catch (OperationCanceledException) { return; }
             catch (ObjectDisposedException) { return; }

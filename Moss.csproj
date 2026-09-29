@@ -9,6 +9,9 @@
     <AssemblyName>Moss</AssemblyName>
     <RootNamespace>Moss</RootNamespace>
     <ApplicationIcon>Assets\Moss.ico</ApplicationIcon>
-    <DefaultItemExcludes>$(DefaultItemExcludes);work/**;outputs/**</DefaultItemExcludes>
+    <DefaultItemExcludes>$(DefaultItemExcludes);work/**;outputs/**;offline-package/**</DefaultItemExcludes>
   </PropertyGroup>
+  <ItemGroup>
+    <Resource Include="Assets\Moss.ico" />
+  </ItemGroup>
 </Project>

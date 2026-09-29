@@ -31,7 +31,7 @@ public partial class MainWindow : Window
 {
     private const uint ModAlt = 0x0001, ModControl = 0x0002, ModShift = 0x0004, ModNoRepeat = 0x4000;
     private const int WmHotkey = 0x0312, WhMouseLl = 14, WmRightButtonUp = 0x0205;
-    private const ushort VkControl = 0x11, VkC = 0x43, VkV = 0x56;
+    private const ushort VkControl = 0x11, VkC = 0x43, VkV = 0x56, VkEscape = 0x1B;
     private static readonly HttpClient Http = new() { Timeout = TimeSpan.FromSeconds(90) };
     private static readonly string[] FeatureOrder = ["summarize", "proofread", "words", "rephrase"];
     private static readonly Dictionary<string, string> FriendlyNames = new(StringComparer.OrdinalIgnoreCase)
@@ -57,7 +57,7 @@ public partial class MainWindow : Window
     private IntPtr _targetWindow = IntPtr.Zero;
     private string _captureFeature = "";
     private string _currentResult = "";
-    private bool _ready, _allowExit;
+    private bool _ready, _allowExit, _hotkeyConflict;
 
     public MainWindow()
     {
@@ -84,8 +84,10 @@ public partial class MainWindow : Window
     public void StartInBackground()
     {
         ShowInTaskbar = false;
+        Opacity = 0;
         Show();
         Hide();
+        Opacity = 1;
     }
 
     public void OpenSettings()
@@ -359,21 +361,20 @@ public partial class MainWindow : Window
     {
         if (_source is null) return;
         foreach (var id in _hotkeyIds.Values) UnregisterHotKey(_source.Handle, id);
-        var registered = 0;
+        _hotkeyConflict = false;
         foreach (var action in FeatureOrder)
         {
             if (!IsFeatureEnabled(action) || !_settings.Shortcuts.TryGetValue(action, out var shortcut)) continue;
             if (!RegisterHotKey(_source.Handle, _hotkeyIds[action], shortcut.Modifiers | ModNoRepeat, (uint)shortcut.Key))
             {
-                SettingsStatus.Text = $"{FriendlyNames[action]} shortcut is already in use. Record another one.";
+                _hotkeyConflict = true;
                 SettingsStatus.Foreground = Brushes.Orange;
             }
-            else registered++;
         }
-        if (registered > 0 && SettingsStatus.Foreground == Brushes.Orange)
+        if (_hotkeyConflict)
         {
-            SettingsStatus.Text = "Settings saved. One shortcut may be used by another app.";
-            SettingsStatus.Foreground = (Brush)FindResource("Accent");
+            SettingsStatus.Text = "One or more shortcuts are in use by another app. Record a different combination.";
+            SettingsStatus.Foreground = Brushes.Orange;
         }
     }
 
@@ -406,7 +407,12 @@ public partial class MainWindow : Window
                     if (IsVisible || !ContextMenuToggle.IsChecked.GetValueOrDefault()) return;
                     await Task.Delay(90);
                     var selected = await ReadSelectionAsync(target);
-                    if (!string.IsNullOrWhiteSpace(selected)) OpenQuickActions(selected.Trim(), target, point);
+                    if (!string.IsNullOrWhiteSpace(selected))
+                    {
+                        SetForegroundWindow(target);
+                        SendKey(VkEscape, true); SendKey(VkEscape, false);
+                        OpenQuickActions(selected.Trim(), target, point);
+                    }
                 }));
             }
         }
@@ -419,7 +425,6 @@ public partial class MainWindow : Window
         _captureFeature = feature;
         SettingsStatus.Text = $"Press the shortcut for {FriendlyNames[feature]}. Use Ctrl, Alt, or Shift with another key. Esc cancels.";
         SettingsStatus.Foreground = (Brush)FindResource("Accent");
-        button.Content = "Press keys…";
         button.Focus();
     }
 
@@ -499,7 +504,7 @@ public partial class MainWindow : Window
         ProofreadBinding.Opacity = _settings.Proofread ? 1 : 0.48;
         WordsBinding.Opacity = _settings.Words ? 1 : 0.48;
         RephraseBinding.Opacity = _settings.Rephrase ? 1 : 0.48;
-        if (showStatus && string.IsNullOrEmpty(_captureFeature))
+        if (showStatus && string.IsNullOrEmpty(_captureFeature) && !_hotkeyConflict)
         {
             SettingsStatus.Text = "Settings saved automatically.";
             SettingsStatus.Foreground = (Brush)FindResource("Accent");
