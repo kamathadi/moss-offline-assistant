@@ -1,0 +1,56 @@
+<Window x:Class="Moss.QuickActionsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Moss" Width="392" MinHeight="170" SizeToContent="Height"
+        WindowStyle="None" ResizeMode="NoResize" ShowInTaskbar="False" Topmost="True"
+        Background="Transparent" AllowsTransparency="True" FontFamily="Segoe UI"
+        Foreground="{StaticResource Text}" WindowStartupLocation="Manual"
+        PreviewKeyDown="Popup_PreviewKeyDown">
+  <Border Background="#101612" BorderBrush="#36503A" BorderThickness="1" CornerRadius="14" Padding="17">
+    <StackPanel>
+      <Grid Margin="0,0,0,13">
+        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+          <Viewbox Width="22" Height="22" Margin="0,0,9,0">
+            <Canvas Width="32" Height="32">
+              <Path Data="M16,28 C16,21 16,14 16,4 M16,18 C9,18 5,14 4,8 C10,7 15,10 16,18 M16,25 C23,25 27,21 28,15 C22,14 17,18 16,25"
+                    Stroke="{StaticResource Accent}" StrokeThickness="2.2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent"/>
+            </Canvas>
+          </Viewbox>
+          <StackPanel>
+            <TextBlock Text="MossAI" FontSize="13" FontWeight="SemiBold" Foreground="{StaticResource Accent}"/>
+            <TextBlock x:Name="HeaderText" Text="Private writing tools" FontSize="10" Foreground="{StaticResource Muted}" Margin="0,2,0,0"/>
+          </StackPanel>
+        </StackPanel>
+        <Button Grid.Column="1" Content="×" Click="Close_Click" Padding="8,4" FontSize="16" MinWidth="30" VerticalAlignment="Top"/>
+      </Grid>
+
+      <StackPanel x:Name="MenuView">
+        <Border Background="#151E18" BorderBrush="#27372C" BorderThickness="1" CornerRadius="8" Padding="10" Margin="0,0,0,11">
+          <TextBlock x:Name="SelectionText" Foreground="#CBD8CE" FontSize="11" TextWrapping="Wrap" MaxHeight="54"/>
+        </Border>
+        <TextBlock Text="CHOOSE AN ACTION" FontSize="9" FontWeight="SemiBold" Foreground="{StaticResource Muted}" Margin="1,0,0,7"/>
+        <StackPanel x:Name="ActionList"/>
+      </StackPanel>
+
+      <StackPanel x:Name="ResultView" Visibility="Collapsed">
+        <TextBlock x:Name="ResultTitle" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,9"/>
+        <Border Background="#151E18" BorderBrush="#27372C" BorderThickness="1" CornerRadius="8" Padding="10" Margin="0,0,0,8">
+          <ScrollViewer MaxHeight="80" VerticalScrollBarVisibility="Auto">
+            <TextBlock x:Name="OriginalText" Foreground="{StaticResource Muted}" FontSize="11" TextWrapping="Wrap"/>
+          </ScrollViewer>
+        </Border>
+        <Border Background="#17221A" BorderBrush="#35553A" BorderThickness="1" CornerRadius="8" Padding="11" Margin="0,0,0,8">
+          <ScrollViewer MaxHeight="210" VerticalScrollBarVisibility="Auto">
+            <TextBlock x:Name="ResultText" Foreground="#E1EFE2" FontSize="12" TextWrapping="Wrap"/>
+          </ScrollViewer>
+        </Border>
+        <TextBlock x:Name="StatusText" FontSize="10" Foreground="{StaticResource Accent}" Margin="1,0,0,12" TextWrapping="Wrap"/>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+          <Button x:Name="CopyButton" Content="Copy" Click="Copy_Click" Margin="0,0,8,0"/>
+          <Button x:Name="ReplaceButton" Content="Replace selection" Style="{StaticResource PrimaryButton}" Click="Replace_Click"/>
+        </StackPanel>
+      </StackPanel>
+    </StackPanel>
+  </Border>
+</Window>
