@@ -10,9 +10,9 @@ Moss works on text you select when you use an action; it does not continuously r
 
 ## Download and install
 
-The complete offline Windows bundle is included in [`offline-package`](offline-package/). It contains the Moss app, MossAI model, local inference runtime, license notices, and install/uninstall scripts. You can also download the ready-to-extract ZIP from [GitHub Releases](https://github.com/businessadikamath-hue/moss-offline-assistant/releases/latest).
+The complete offline Windows bundle is included in [`offline-package`](offline-package/). It contains the Moss app, MossAI model, local inference runtime, license notices, and install/uninstall scripts. You can download the whole repository, including that bundle, as a [single ZIP archive](https://github.com/businessadikamath-hue/moss-offline-assistant/archive/refs/heads/main.zip).
 
-1. Download and extract `Moss-Offline-Windows.zip`, or use the included `offline-package` folder.
+1. Download and extract the repository ZIP, then open its `offline-package` folder.
 2. Run `Install-Moss.ps1` from that folder. If Windows blocks the script, open PowerShell there and run `powershell -ExecutionPolicy Bypass -File .\Install-Moss.ps1`.
 3. Search for **Moss** in Start to open Preferences. It starts quietly at sign-in.
 
